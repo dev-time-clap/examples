@@ -2,9 +2,9 @@ package de.devtime.test;
 
 import java.lang.reflect.Method;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.test.context.TestContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import lombok.Getter;
 
