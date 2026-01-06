@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d %5p [%10.10t] %-83.80style{%c{1.}.%M(%L)} %3tid | %m%n" />
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Logger name="de.devtime.test" level="DEBUG" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- dev|time logging configuration (Default: OFF) -->
+    <Logger name="de.devtime" level="INFO" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Spring-Framework logging configuration (Default: WARN) -->
+    <Logger name="org.springframework" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.springframework.boot.StartupInfoLogger" level="INFO" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.springframework.boot.SpringApplication" level="INFO" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Tomcat logging configuration (Default: WARN) -->
+    <Logger name="org.apache.juli.logging" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Hibernate logging configuration -->
+    <!-- Production setting: set all to WARN -->
+    <!-- Development settings: -->
+    <!-- org.hibernate=INFO -->
+    <!-- org.hibernate.SQL=DEBUG -->
+    <!-- org.hibernate.orm.jdbc.bind=TRACE -->
+    <!-- org.hibernate.stat=DEBUG -->
+    <!-- org.hibernate.SQL_SLOW=INFO -->
+    <!-- org.hibernate.cache=DEBUG -->
+    <!-- see: https://thorben-janssen.com/hibernate-logging-guide/ -->
+    <Logger name="org.hibernate" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.hibernate.SQL" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.hibernate.orm.jdbc.bind" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.hibernate.stat" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.hibernate.SQL_SLOW" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="org.hibernate.cache" level="WARN" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <!-- Hibernate hikari logging configuration (Default: WARN) -->
+    <Logger name="com.zaxxer.hikari" level="ERROR" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Flyway logging configuration (Default: WARN) -->
+    <Logger name="io.zonky" level="DEBUG" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Flyway logging configuration (Default: WARN) -->
+    <Logger name="org.flywaydb" level="INFO" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <!-- Ignore Narrowing proxy warning -->
+    <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" additivity="false">
+      <AppenderRef ref="Console" />
+    </Logger>
+
+    <Root level="WARN">
+      <AppenderRef ref="Console" />
+    </Root>
+  </Loggers>
+</Configuration>

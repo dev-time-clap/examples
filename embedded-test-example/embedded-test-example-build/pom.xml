@@ -1,0 +1,393 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.devtime.app</groupId>
+    <artifactId>embedded-test-example</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>embedded-test-example-build</artifactId>
+  <packaging>jar</packaging>
+
+  <name>dev|time embedded-test-example - build</name>
+  <description>Build module of this component.</description>
+
+  <properties>
+
+    <!-- Skip dependency-track BOM upload for this child module because we only want to upload aggreated BOMs -->
+    <dependency-track.skip>${dependency-track-skip-child-modules}</dependency-track.skip>
+    <cyclonedx.skip>${dependency-track-skip-child-modules}</cyclonedx.skip>
+
+    <final.jar.name>embedded-test-example</final.jar.name>
+
+    <architecture>amd64</architecture>
+    <docker.image.main.Class>de.devtime.app.example.SpringApplicationInitializer</docker.image.main.Class>
+    <docker.service.name>embedded-test-example</docker.service.name>
+    <docker.image.name>dev-time.de/${project.groupId}/${docker.service.name}-${architecture}:${project.version}</docker.image.name>
+
+  </properties>
+  
+  <dependencies>
+  
+    <!-- ===================== -->
+    <!-- dev|time dependencies -->
+    <!-- ===================== -->
+    <dependency>
+      <groupId>de.devtime.app</groupId>
+      <artifactId>embedded-test-example-app</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!-- =================== -->
+    <!-- Common dependencies -->
+    <!-- =================== -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${final.jar.name}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>build-info</goal>
+              </goals>
+<!--              <configuration>-->
+<!--                <additionalProperties>-->
+<!--                  <git.branch>${git.branch}</git.branch>-->
+<!--                  <git.commit.hash>${git.commit.id}</git.commit.hash>-->
+<!--                </additionalProperties>-->
+<!--              </configuration>              -->
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>io.github.git-commit-id</groupId>-->
+<!--        <artifactId>git-commit-id-maven-plugin</artifactId>-->
+<!--      </plugin>      -->
+    </plugins>
+  </build>
+  
+  <profiles>
+    <profile>
+      <id>shade</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals><goal>shade</goal></goals>
+                <configuration>
+                  <createDependencyReducedPom>false</createDependencyReducedPom>
+                  <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                      <mainClass>de.devtime.app.example.SpringApplicationInitializer</mainClass>
+                    </transformer>
+                  </transformers>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- ========================== -->
+    <!-- Profile to build a fat-jar -->
+    <!-- ========================== -->
+    <!-- Properties:                --> 
+    <!-- - docker.image.main.Class  -->
+    <!-- ========================== -->
+    <profile>
+      <id>build-fat-jar</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-maven-plugin</artifactId>
+              <configuration>
+                <layers>
+                  <enabled>true</enabled>
+                </layers>
+                <mainClass>${docker.image.main.Class}</mainClass>          
+              </configuration>
+              <executions>
+                <execution>
+                  <id>create fat-jar</id>
+                  <goals>
+                    <goal>repackage</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ===================================== -->
+    <!-- Profile to build a local docker image -->
+    <!-- ===================================== -->
+    <!-- Properties:                           --> 
+    <!-- - docker.service.name                 --> 
+    <!-- - docker.image.name                   --> 
+    <!-- ===================================== -->
+    <profile>
+      <id>build-docker-image</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>docker-clean</id>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <executable>docker</executable>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <arguments>
+                      <argument>rmi</argument>
+                      <argument>${docker.image.name}</argument>
+                    </arguments>
+                    <successCodes>
+                      <successCode>0</successCode>
+                      <successCode>1</successCode>
+                    </successCodes>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>docker-build</id>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <executable>docker</executable>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <arguments>
+                      <argument>build</argument>
+                      <argument>-t</argument>
+                      <argument>${docker.image.name}</argument>
+                      <argument>.</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>            
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ======================================== -->
+    <!-- Profile to local deploy the docker image -->
+    <!-- ======================================== -->
+    <!-- Properties:                              --> 
+    <!-- - docker.service.name                    -->
+    <!-- ======================================== -->
+    <profile>
+      <id>deploy-local-docker</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>exec-maven-plugin</artifactId>
+              <groupId>org.codehaus.mojo</groupId>
+              <configuration>
+                <executable>docker-compose</executable>
+                <workingDirectory>${project.basedir}</workingDirectory>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>docker-compose-down</id>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <arguments>
+                      <argument>rm</argument>
+                      <argument>-f</argument>
+                      <argument>-s</argument>
+                      <argument>${docker.service.name}</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>docker-compose-up</id>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <arguments>
+                      <argument>up</argument>
+                      <argument>-d</argument>
+                    </arguments>
+                  </configuration>
+                </execution>            
+              </executions>
+            </plugin>              
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>org.codehaus.mojo</groupId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ================================================ -->
+    <!-- Profile to deploy the docker image to production -->
+    <!-- ================================================ -->
+    <!-- Properties:                                      --> 
+    <!-- - docker.service.name                            -->
+    <!-- ================================================ -->
+    <profile>
+      <id>deploy-prod</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>exec-maven-plugin</artifactId>
+              <groupId>org.codehaus.mojo</groupId>
+              <configuration>
+                <executable>cmd</executable>
+                <workingDirectory>${project.basedir}</workingDirectory>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>prod-deploy</id>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <arguments>
+                      <argument>/C</argument>
+                      <argument>start</argument>
+                      <argument>${project.basedir}/prod-deploy.bat</argument>
+                      <argument>${docker.service.name}.tar</argument>
+                      <argument>${docker.image.name}</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>org.codehaus.mojo</groupId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+        
+    <!-- ======================================== -->
+    <!-- Profile to reset docker environment      -->
+    <!-- ======================================== -->
+    <!-- Properties:                              --> 
+    <!-- - docker.service.name                    -->
+    <!-- ======================================== -->
+    <profile>
+      <id>reset-local-docker</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>exec-maven-plugin</artifactId>
+              <groupId>org.codehaus.mojo</groupId>
+              <configuration>
+                <executable>docker-compose</executable>
+                <workingDirectory>${project.basedir}</workingDirectory>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>docker-compose-down-v</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <arguments>
+                      <argument>down</argument>
+                      <argument>-v</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>docker-compose-up</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <arguments>
+                      <argument>up</argument>
+                      <argument>-d</argument>
+                    </arguments>
+                  </configuration>
+                </execution>            
+              </executions>
+            </plugin>              
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>org.codehaus.mojo</groupId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>    
+  </profiles>
+</project>

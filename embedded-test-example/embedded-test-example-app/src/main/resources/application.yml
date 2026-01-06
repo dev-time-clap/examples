@@ -1,0 +1,29 @@
+devtime:
+  framework:
+    http:
+      client:
+        connection:
+          timeout: 30000
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: sa
+  flyway:
+    enabled: true
+    url: jdbc:h2:mem:testdb
+    user: sa
+    password: sa
+  jpa:
+# Enable this setting to create a DDL sql script file based on all entity classes  
+#    properties.javax.persistence.schema-generation.create-source: metadata
+#    properties.javax.persistence.schema-generation.scripts.action: create
+#    properties.javax.persistence.schema-generation.scripts.create-target: create.sql
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+  main:
+    log-startup-info: true
+  profiles:
+    active: production

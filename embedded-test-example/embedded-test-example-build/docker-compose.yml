@@ -1,0 +1,18 @@
+name: dev-time_embedded-test-example_local
+
+networks:
+  embedded-test-example-network:
+  
+services:
+
+  embedded-test-example:
+    image: dev-time.de/de.devtime.games/embedded-test-example-amd64:1.0.0-SNAPSHOT
+    networks:
+      - embedded-test-example-network
+    restart: always
+    volumes:
+      - ./volumes/embedded-test-example/application.properties:/BOOT-INF/classes/application.properties
+      - ./volumes/embedded-test-example/log-config/log4j2.xml:/BOOT-INF/classes/log4j2.xml
+      - ./volumes/embedded-test-example/logs:/var/log/dev-time-app
+    environment:
+      TZ: Europe/Berlin

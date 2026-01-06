@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>de.devtime.common</groupId>
+    <artifactId>parent-pom</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>de.devtime.app</groupId>
+  <artifactId>embedded-test-example</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <name>dev|time embedded-test-example</name>
+  <description>Some embedded-test-example</description>
+
+  <modules>
+    <module>embedded-test-example-app</module>
+  </modules>
+  
+  <properties>
+    <!-- ================== -->
+    <!-- Used by SonarCloud -->
+    <!-- ================== -->
+    <sonar.projectKey>devtime_embedded-test-example</sonar.projectKey>
+    <sonar.projectName>dev|time embedded-test-example</sonar.projectName>
+
+    <!-- ======================== -->
+    <!-- Used by Dependency-Track -->
+    <!-- ======================== -->
+    <dependency.track.project.name>dev|time embedded-test-example</dependency.track.project.name>
+    <dependency.track.project.type>application</dependency.track.project.type>
+
+    <docker.image.build.enabled>false</docker.image.build.enabled>
+    
+    <devtime-framework.version>1.0.0-SNAPSHOT</devtime-framework.version>
+  </properties>
+  
+  <dependencyManagement>
+    <dependencies>
+	</dependencies>
+  </dependencyManagement>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+        
+    <!-- ===================== -->
+    <!-- dev|time dependencies -->
+    <!-- ===================== -->
+	
+    <!-- =================== -->
+    <!-- Common dependencies -->
+    <!-- =================== -->
+	
+    <!-- ==================== -->
+    <!-- Testing dependencies -->
+    <!-- ==================== -->
+    <!-- We want to keep the pom configuration as clean as possible. So we configure all basic test dependencies -->
+    <!-- in the parent pom of a component, to provide all sub modules with the same test dependencies. -->
+    <!-- Only the bdd module needs more specific test dependencies, that are not listed here. -->
+  </dependencies>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <argLine>
+              -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+              -Xshare:off
+            </argLine>
+          </configuration>
+        </plugin>
+      </plugins>        
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
