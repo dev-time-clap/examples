@@ -1,0 +1,1009 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-dependencies</artifactId>
+    <version>3.4.4</version>
+  </parent>
+
+  <groupId>de.devtime.common</groupId>
+  <artifactId>parent-pom</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>dev|time parent-pom</name>
+  <description>Contains common configuration and dependencies for all dev|time projects.</description>
+
+  <developers>
+    <developer>
+      <id>devtime</id>
+      <name>dev|time</name>
+      <email>contact@dev-time.de</email>
+      <roles>
+        <role>Project leader</role>
+        <role>Businessanalyst</role>
+        <role>Architect</role>
+        <role>Developer</role>
+        <role>Tester</role>
+      </roles>
+      <timezone>GMT+1</timezone>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:https://dev-time.env/gitlab/dev-time/parent-pom.git</connection>
+    <developerConnection>scm:https://dev-time.env/gitlab/dev-time/parent-pom.git</developerConnection>
+    <url>https://dev-time.env/gitlab/dev-time/parent-pom</url>
+    <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://dev-time.atlassian.net/jira</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>https://nexus.dev-time.env/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>https://nexus.dev-time.env/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <java.version>21</java.version>
+    <spring-boot.version>3.4.4</spring-boot.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <formatter.config.directory>${project.build.directory}/formatter</formatter.config.directory>
+    <formatter.config.file>${formatter.config.directory}/formatter.xml</formatter.config.file>
+
+    <!-- ============== -->
+    <!-- Used by Gitlab -->
+    <!-- ============== -->
+    <gitlab.server.url>https://dev-time.env/gitlab</gitlab.server.url>
+    <gitlab.project.id>2</gitlab.project.id>
+
+    <!-- ================= -->
+    <!-- Used by Sonarqube -->
+    <!-- ================= -->
+    <sonar.host.url>https://sonarqube.dev-time.env</sonar.host.url>
+    <sonar.organization>dev|time</sonar.organization>
+    <sonar.projectKey>devtime_parent-pom</sonar.projectKey>
+    <sonar.projectName>dev|time parent-pom</sonar.projectName>
+    <sonar.projectVersion>${project.version}</sonar.projectVersion>
+    <!-- solution for StackOverflowError problem (@see: https://community.sonarsource.com/t/stackoverflowerror-at-defaultinputcomponent-equals/20324) -->
+    <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    <sonar.coverage.exclusions>de.devtime.core/**,**/*Test.class,**/Test*.class,**/*Test$*.class,**/*IT.class,**/IT*.class,**/*IT$*.class,**/test/**</sonar.coverage.exclusions>
+
+    <!-- ======================== -->
+    <!-- Used by Dependency-Track -->
+    <!-- ======================== -->
+    <!-- Skip BOM upload for all children module using this property because we only want to upload aggregated BOMs -->
+    <dependency.track.skip.child.modules>true</dependency.track.skip.child.modules>
+    <dependency.track.api.url>https://dependency-track.dev-time.env</dependency.track.api.url>
+    <dependency.track.api.key>${env.DEPENDENCY_TRACK_API_KEY}</dependency.track.api.key>
+    <dependency.track.project.parent>dev|time</dependency.track.project.parent>
+    <dependency.track.project.type>file</dependency.track.project.type>
+    <dependency.track.project.domain>common</dependency.track.project.domain>
+    <dependency.track.failOnError>false</dependency.track.failOnError>
+    <dependency.track.threshold.critical>0</dependency.track.threshold.critical>
+    <dependency.track.threshold.high>0</dependency.track.threshold.high>
+    <dependency.track.threshold.medium>5</dependency.track.threshold.medium>
+    <dependency.track.threshold.low>10</dependency.track.threshold.low>
+
+    <!-- =============== -->
+    <!-- Plugin versions -->
+    <!-- =============== -->
+    <dependency-track-maven-plugin.version>1.7.0</dependency-track-maven-plugin.version>
+    <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <maven-changes-plugin.version>2.12.1</maven-changes-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+    <maven-jxr-plugin.version>3.1.1</maven-jxr-plugin.version>
+    <maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
+    <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
+    <sonar-maven-plugin.version>5.1.0.4751</sonar-maven-plugin.version>
+    <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
+
+    <!-- =================== -->
+    <!-- Common dependencies -->
+    <!-- =================== -->
+    <cloning.version>1.9.12</cloning.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <commons-math3.version>3.6.1</commons-math3.version>
+    <commons-text.version>1.9</commons-text.version>
+    <commons-validator.version>1.7</commons-validator.version>
+    <guava.version>30.1.1-jre</guava.version>
+    <javers.version>6.6.5</javers.version>
+    <lombok.version>1.18.42</lombok.version>
+    <opencsv.version>5.5.2</opencsv.version>
+    <swagger.version>2.2.36</swagger.version>
+    <reflections.version>0.10.2</reflections.version>
+    <throwing-function.version>1.5.1</throwing-function.version>
+    <wagon-ssh.version>3.4.3</wagon-ssh.version>
+    <wagon-ftp.version>3.4.3</wagon-ftp.version>
+    
+    <!-- ==================== -->
+    <!-- Spring dependencyies -->
+    <!-- ==================== -->
+    <spring-restdocs-bom.version>3.0.0</spring-restdocs-bom.version>
+    <spring-statemachine-bom.version>4.0.1</spring-statemachine-bom.version>
+    
+    <!-- ==================== -->
+    <!-- Eclipse dependencies -->
+    <!-- ==================== -->
+    <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+    <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
+
+    <!-- ========================================================= -->
+    <!-- Temporary updated dependencies because of vulnerabilities -->
+    <!-- ========================================================= -->
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- =================== -->
+      <!-- Spring dependencies -->
+      <!-- =================== -->
+      <dependency>
+        <groupId>org.springframework.statemachine</groupId>
+        <artifactId>spring-statemachine-bom</artifactId>
+        <version>${spring-statemachine-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.restdocs</groupId>
+        <artifactId>spring-restdocs-bom</artifactId>
+        <version>${spring-restdocs-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring-framework.version}</version>
+        <exclusions>
+          <!-- TODO Wird diese exclusion tatsächlich benötigt? -->
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- Wir möchten log4j2 nutzen für all unsere Projekte nutzen. -->
+      <!-- Daher werden alle anderen logging Bibliotheken ausgeschlossen, um Konflikte zu vermeiden. -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring-boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- =================== -->
+      <!-- Common dependencies -->
+      <!-- =================== -->
+
+      <!-- cloning: Useful utils for (deep) cloning -->
+      <dependency>
+        <groupId>uk.com.robust-it</groupId>
+        <artifactId>cloning</artifactId>
+        <version>${cloning.version}</version>
+      </dependency>
+      <!-- commons-collections4: Useful extension for Java Collections -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-collections4</artifactId>
+        <version>${commons-collections4.version}</version>
+      </dependency>
+      <!-- commons-io: Useful utils for accessing the file system -->
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <!-- commons-math3: Useful lightweight mathematical and statistical utils -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math3</artifactId>
+        <version>${commons-math3.version}</version>
+      </dependency>
+      <!-- commons-text: Useful lightweight test and string utils -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons-text-version}</version>
+      </dependency>
+      <!-- commons-validator: Useful validators -->
+      <dependency>
+        <groupId>commons-validator</groupId>
+        <artifactId>commons-validator</artifactId>
+        <version>${commons-validator.version}</version>
+      </dependency>
+      <!-- guava: Useful utils from Google -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <!-- javers-core: Useful diff and audit framework -->
+      <dependency>
+        <groupId>org.javers</groupId>
+        <artifactId>javers-core</artifactId>
+        <version>${javers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>      
+      <!-- opencsv: Useful support for CSV files -->
+      <dependency>
+        <groupId>com.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>${opencsv.version}</version>
+      </dependency>
+      <!-- reflections: Useful reflection utils -->
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <!-- throwing-function: Useful support for java 8 lambda expressions with checked exceptions -->
+      <dependency>
+        <groupId>com.pivovarit</groupId>
+        <artifactId>throwing-function</artifactId>
+        <version>${throwing-function.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- =================== -->
+    <!-- Common dependencies -->
+    <!-- =================== -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- ==================== -->
+    <!-- Logging dependencies -->
+    <!-- ==================== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+
+        <!-- Allows cmd process executions -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec-maven-plugin.version}</version>
+        </plugin>
+
+        <!-- Enables code coverage checks -->
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>prepare-agent-surefire</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <propertyName>jacoco.agent.argLine</propertyName>
+              </configuration>
+            </execution>
+            <execution>
+              <id>prepare-agent-failsafe</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+              <configuration>
+                <propertyName>jacoco.agent.argLine</propertyName>
+              </configuration>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <configuration>
+                <excludes>
+                  <exclude>**/Test*.class</exclude>
+                  <exclude>**/*Test.class</exclude>
+                  <exclude>**/*Test$*.class</exclude>
+                  <exclude>**/EmbeddedIT*.class</exclude>
+                  <exclude>**/*EmbeddedIT.class</exclude>
+                  <exclude>**/*EmbeddedIT$*.class</exclude>
+                  <exclude>**/test/**</exclude>
+                  <!-- Ignore all generated classes from JPAModelGen -->
+                  <exclude>**/*_.*</exclude>
+                </excludes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <id>download-formatter</id>
+              <phase>generate-sources</phase>
+              <configuration>
+                <target>
+                  <mkdir dir="${formatter.config.directory}" />
+                  <get
+                    src="https://gitlab.dev-time.env/dev-time/build-templates/-/raw/main/configs/devtime_formatter.xml"
+                    dest="${formatter.config.file}" verbose="true" />
+                </target>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- This plugin provides static code analysis tools -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${maven-checkstyle-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>${maven-changes-plugin.version}</version>
+        </plugin>
+
+        <!-- Several compile configuration for all projects -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <parameters>true</parameters>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <fork>true</fork>
+            <encoding>${project.build.sourceEncoding}</encoding>
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+
+        <!-- Enables integration tests -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+          <configuration>
+            <skip>true</skip>
+            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>integration-tests</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <argLine>${failsafeArgLine}, --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- Enables source code cross references -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>${maven-jxr-plugin.version}</version>
+        </plugin>
+
+        <!-- Enables project information in maven sites -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
+
+        <!-- Creates maven sites -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+          <configuration>
+            <locales>en</locales>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-ftp</artifactId>
+              <version>${wagon-ftp.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+          <configuration>
+            <systemPropertyVariables>
+              <log4j2.plugin.packages>de.devtime.testframework.logging</log4j2.plugin.packages>
+            </systemPropertyVariables>
+            <argLine>
+              ${jacoco.agent.argLine}
+              --add-opens java.base/java.util=ALL-UNNAMED
+              --add-opens java.base/java.lang=ALL-UNNAMED
+            </argLine>
+          </configuration>
+        </plugin>
+
+        <!-- Plugin that reports results of unit tests -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+
+        <!-- Enables SonarQube/SonarCloud Scanner -->
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.44.4</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <java>
+              <eclipse>
+                <!-- Die 'devtime_formatter.xml' liegt zentral im 'build-templates' git Repository im Verzeichnis 'configs'. -->
+                <file>${formatter.config.file}</file>
+              </eclipse>
+              <removeUnusedImports />
+            </java>
+          </configuration>
+        </plugin>
+
+        <!-- Enables tracking of different tags -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>${taglist-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-changes-plugin</artifactId>
+        <configuration>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jira-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>dependency-info</report>
+              <report>modules</report>
+              <report>team</report>
+              <report>scm</report>
+              <report>issue-management</report>
+              <report>mailing-lists</report>
+              <report>dependency-management</report>
+              <report>dependencies</report>
+              <report>dependency-convergence</report>
+              <report>ci-management</report>
+              <report>plugin-management</report>
+              <report>plugins</report>
+              <report>distribution-management</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jxr-no-fork</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <!-- Taglist Plugin must be executed after JXR Plugin -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <configuration>
+          <tagListOptions>
+            <tagClasses>
+              <tagClass>
+                <displayName>FIXME Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>fixme</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>@fixme</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>Todo Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>todo</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>@todo</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>XXX Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>xxx</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                  <tag>
+                    <matchString>@xxx</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+              <tagClass>
+                <displayName>Deprecated Work</displayName>
+                <tags>
+                  <tag>
+                    <matchString>@deprecated</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+            </tagClasses>
+          </tagListOptions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependency-updates-report</report>
+              <report>plugin-updates-report</report>
+              <report>property-updates-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <profiles>
+    <profile>
+      <id>sbom-with-cyclonedx-and-dependency-track-for-dev</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!-- Create SBOM -->
+            <plugin>
+              <groupId>org.cyclonedx</groupId>
+              <artifactId>cyclonedx-maven-plugin</artifactId>
+              <version>${cyclonedx-maven-plugin.version}</version>
+              <executions>
+                <execution>
+                  <id>create-sbom-for-dev</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>makeAggregateBom</goal>
+                  </goals>
+                  <configuration>
+                    <includeCompileScope>true</includeCompileScope>
+                    <includeProvidedScope>true</includeProvidedScope>
+                    <includeRuntimeScope>true</includeRuntimeScope>
+                    <includeSystemScope>true</includeSystemScope>
+                    <includeTestScope>false</includeTestScope>
+                    <outputName>sbom</outputName>
+                  </configuration>
+                </execution>
+              </executions>
+              <configuration>
+                <projectType>${dependency.track.project.type}</projectType>
+                <schemaVersion>1.4</schemaVersion>
+                <includeBomSerialNumber>true</includeBomSerialNumber>
+                <includeLicenseText>true</includeLicenseText>
+                <outputReactorProjects>true</outputReactorProjects>
+                <outputFormat>xml</outputFormat>
+                <skipAttach>true</skipAttach>
+              </configuration>
+            </plugin>
+            <!-- Upload SBOM to Dependency-Track -->
+            <plugin>
+              <groupId>io.github.pmckeown</groupId>
+              <artifactId>dependency-track-maven-plugin</artifactId>
+              <version>${dependency-track-maven-plugin.version}</version>
+              <configuration>
+                <dependencyTrackBaseUrl>${dependency-tr${dependency.track.api.url}</dependencyTrackBaseUrl>
+                <apiKey>${dependency.track.api.key}</apiKey>
+                <updateProjectInfo>true</updateProjectInfo>
+                <updateParent>true</updateParent>
+                <parentName>${dependency.track.project.parent}</parentName>
+                <projectName>${dependency.track.project.parent}.${dependency.track.project.domain}.${project.artifactId}</projectName>
+                <failOnError>${dependency.track.failOnError}</failOnError>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>upload SBOM</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>upload-bom</goal>
+                  </goals>
+                  <configuration>
+                    <bomLocation>${project.build.directory}/sbom.xml</bomLocation>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>findings</id>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>findings</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>metrics</id>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>metrics</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        
+        <plugins>
+          <plugin>
+            <groupId>org.cyclonedx</groupId>
+            <artifactId>cyclonedx-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>io.github.pmckeown</groupId>
+            <artifactId>dependency-track-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  
+    <!-- ===================================== -->
+    <!-- Profile to prepare some release stuff -->
+    <!-- ===================================== -->
+    <profile>
+      <id>prepare-release</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>enforce-versions</id>
+                  <goals>
+                    <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                      <requireReleaseDeps>
+                        <message>No snapshot versions allowed!</message>
+                      </requireReleaseDeps>
+                    </rules>
+                    <fail>true</fail>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  
+    <!-- ========================================= -->
+    <!-- Profile to run embedded integration tests -->
+    <!-- ========================================= -->
+    <profile>
+      <id>embedded-integration-tests</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>${maven-failsafe-plugin.version}</version>
+              <configuration>
+                <skip>false</skip>
+                <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  
+    <!-- =============================== -->
+    <!-- Eclipse specific configurations -->
+    <!-- =============================== -->
+    <!-- If you use eclipse then you want to suppress some warnings while maven build and you want use the -->
+    <!-- maven-eclipse-plugin to setup eclipse configuration by pom..xml -->
+    <profile>
+      <id>only-eclipse</id>
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+      <properties>
+        <jacoco.agent.argLine></jacoco.agent.argLine>
+      </properties>
+      <build>
+        <plugins>
+          <!-- This plugin's configuration is used to store Eclipse m2e settings only. --> 
+          <!-- It has no influence on the Maven build itself. -->
+          <plugin>
+            <groupId>org.eclipse.m2e</groupId>
+            <artifactId>lifecycle-mapping</artifactId>
+            <version>${lifecycle-mapping.version}</version>
+            <configuration>
+              <lifecycleMappingMetadata>
+                <pluginExecutions>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>org.codehaus.mojo</groupId>
+                      <artifactId>aspectj-maven-plugin</artifactId>
+                      <versionRange>[1.15.0,)</versionRange>
+                      <goals>
+                        <goal>compile</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore></ignore>
+                    </action>
+                  </pluginExecution>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>com.diffplug.spotless</groupId>
+                      <artifactId>spotless-maven-plugin</artifactId>
+                      <versionRange>[2.44.4,)</versionRange>
+                      <goals>
+                        <goal>check</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore></ignore>
+                    </action>
+                  </pluginExecution>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-antrun-plugin</artifactId>
+                      <versionRange>[3.1.0,)</versionRange>
+                      <goals>
+                        <goal>run</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore></ignore>
+                    </action>
+                  </pluginExecution>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>org.jacoco</groupId>
+                      <artifactId>
+                        jacoco-maven-plugin
+                      </artifactId>
+                      <versionRange>
+                        [0.5.7.201204190339,)
+                      </versionRange>
+                      <goals>
+                        <goal>prepare-agent</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore />
+                    </action>
+                  </pluginExecution>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-checkstyle-plugin</artifactId>
+                      <versionRange>[3.1.2,)</versionRange>
+                      <goals>
+                        <goal>check</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore></ignore>
+                    </action>
+                  </pluginExecution>
+                  <pluginExecution>
+                    <pluginExecutionFilter>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-dependency-plugin</artifactId>
+                      <versionRange>[3.2.0,)</versionRange>
+                      <goals>
+                        <goal>unpack</goal>
+                      </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                      <ignore></ignore>
+                    </action>
+                  </pluginExecution>
+                </pluginExecutions>
+              </lifecycleMappingMetadata>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <version>${maven-eclipse-plugin.version}</version>
+            <configuration>
+              <useProjectReferences>true</useProjectReferences>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

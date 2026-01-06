@@ -1,0 +1,4 @@
+include:
+  - project: 'dev-time/build-templates'
+    file: '/build-pom/.gitlab-ci.yml'
+    ref: main
