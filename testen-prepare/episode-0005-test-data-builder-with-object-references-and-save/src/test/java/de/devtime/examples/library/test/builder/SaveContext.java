@@ -1,7 +1,6 @@
 package de.devtime.examples.library.test.builder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +24,6 @@ public class SaveContext {
     return entityClass.getName() + "::" + uniqueKey;
   }
 
-  private final Map<JpaRepository<?, UUID>, List<Object>> cacheForSave = new HashMap<>();
   private final Map<String, Object> cache = new HashMap<>();
 
   @Getter

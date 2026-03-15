@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import de.devtime.examples.library.persistence.entity.AdditionalBookDataEntity;
 import de.devtime.examples.library.persistence.entity.AdditionalBookDataEntityTestDataProvider;
 import de.devtime.examples.library.persistence.entity.AuthorEntity;
 import de.devtime.examples.library.persistence.entity.AuthorEntityTestDataProvider;
@@ -28,9 +29,14 @@ class BookTest {
 
   @Test
   void testOurNewTestDataBuilderWithReferences2() {
-    AdditionalBookDataEntityTestDataProvider.create()
-        .withBook(BookEntityTestDataProvider::bookByMorriganWithTitleLombokHowTo)
+    AdditionalBookDataEntity bookDetails = AdditionalBookDataEntityTestDataProvider.create()
         .bookDetailsForJustABookByMorrigan()
+        .buildWithReferencesAndSave();
+
+    BookEntityTestDataProvider.create()
+        .bookByMorriganWithTitleLombokHowTo()
+        .withAdditionalData(bookDetails)
+        .and()
         .buildWithReferencesAndSave();
   }
 
