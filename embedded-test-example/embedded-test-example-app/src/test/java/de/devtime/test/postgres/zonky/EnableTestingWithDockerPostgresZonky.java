@@ -20,11 +20,12 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase.RefreshMode;
 @Inherited
 @ActiveProfiles({ AppProfiles.EMBEDDED_TEST, AppProfiles.PG_ZONKY_TEST })
 @AutoConfigureEmbeddedDatabase(
-    provider = DatabaseProvider.DOCKER,
+    provider = DatabaseProvider.EMBEDDED,
     type = DatabaseType.POSTGRES,
     refresh = RefreshMode.BEFORE_EACH_TEST_METHOD)
 @TestPropertySource(properties = {
-    "zonky.test.database.postgres.docker.image=postgres:18.1-alpine"
+    "zonky.test.database.postgres.docker.image=postgres:18.1-alpine",
+    "spring.flyway.enabled=true"
 })
 public @interface EnableTestingWithDockerPostgresZonky {
 

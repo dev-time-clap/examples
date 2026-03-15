@@ -1,0 +1,87 @@
+package de.devtime.examples.library.persistence.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import org.springframework.context.ApplicationContext;
+
+import de.devtime.examples.library.persistence.entity.CustomerEntity.CustomerEntityBuilder;
+import de.devtime.examples.library.persistence.repository.CustomerRepository;
+import de.devtime.examples.library.test.builder.TestDataBuilder;
+import de.devtime.examples.library.test.builder.TestDataBuilderWithSaveSupport;
+
+public class CustomerEntityTestDataBuilder<B extends TestDataBuilder<CustomerEntity>>
+    extends CustomerEntityBuilder<B>
+    implements TestDataBuilderWithSaveSupport<CustomerEntity, CustomerRepository, B> {
+
+  // --------------------< Add referenced builder here >--------------------
+
+  private List<BookEntityTestDataProvider> bookTestDataProviders = new ArrayList<BookEntityTestDataProvider>();
+
+  public B withLoanedBook(final Consumer<BookEntityTestDataProvider> consumer) {
+    BookEntityTestDataProvider builder = BookEntityTestDataProvider.create();
+    consumer.accept(builder);
+    this.bookTestDataProviders.add(builder);
+    return and();
+  }
+
+  public B withLoanedBook(final BookEntityTestDataProvider bookTestDataBuilder) {
+    this.bookTestDataProviders.add(bookTestDataBuilder);
+    return and();
+  }
+
+  // --------------------< Add super fields here >--------------------
+
+  private UUID id;
+  private int version;
+  private boolean useExternalId = false;
+
+  public B withId(final UUID id) {
+    this.id = id;
+    this.useExternalId = true;
+    return and();
+  }
+
+  public B withVersion(final int version) {
+    this.version = version;
+    return and();
+  }
+
+  // --------------------< Internal builder logic >--------------------
+
+  @Override
+  public String getUniqueDataSetKey(final CustomerEntity entity) {
+    return entity.getNumber();
+  }
+
+  @Override
+  public CustomerRepository getRepository(final ApplicationContext appContext) {
+    return appContext.getBean(CustomerRepository.class);
+  }
+
+  @Override
+  public CustomerEntity buildInternally(final boolean withReferences, final boolean save) {
+    CustomerEntity entity = build().generateId();
+    if (this.useExternalId) {
+      entity.setId(this.id);
+    }
+    entity.setVersion(this.version);
+
+    // Build referenced objects
+    if (withReferences) {
+      buildLoanedBooks(withReferences, save).forEach(entity::addLoanedBook);
+    }
+    if (save) {
+      entity = save(entity);
+    }
+    return entity;
+  }
+
+  private List<BookEntity> buildLoanedBooks(final boolean withReferences, final boolean save) {
+    return this.bookTestDataProviders.stream()
+        .map(provider -> provider.buildInternally(withReferences, save))
+        .toList();
+  }
+}

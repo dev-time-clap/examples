@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
@@ -56,7 +56,7 @@
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-database-postgresql</artifactId>
     </dependency>
-        
+
     <!-- ================= -->
     <!-- Test dependencies -->
     <!-- ================= -->
@@ -75,7 +75,13 @@
           <artifactId>logback-classic</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>io.zonky.test</groupId>
+      <artifactId>embedded-postgres</artifactId>
+      <version>2.2.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -99,7 +105,7 @@
             </argLine>
           </configuration>
         </plugin>
-      </plugins>        
+      </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
@@ -107,5 +113,5 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
     </plugins>
-  </build>  
+  </build>
 </project>

@@ -14,14 +14,15 @@ import de.devtime.app.example.businesslogic.service.BookService;
 import de.devtime.app.example.persistence.repository.BookRepository;
 import de.devtime.app.example.persistence.repository.LoanRepository;
 import de.devtime.app.example.util.ValidationHelper;
-import de.devtime.test.postgres.basic.EnableTestingWithDockerPostgres;
+import de.devtime.test.postgres.zonky.EnableTestingWithDockerPostgresZonky;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Validator;
 import lombok.Setter;
 
 // @EnableTestingWithH2
-@EnableTestingWithDockerPostgres
+// @EnableTestingWithDockerPostgres
+@EnableTestingWithDockerPostgresZonky
 @SpringBootTest(classes = EmbeddedTestApplication.class)
 public abstract class AbstractEmbeddedTest {
 
