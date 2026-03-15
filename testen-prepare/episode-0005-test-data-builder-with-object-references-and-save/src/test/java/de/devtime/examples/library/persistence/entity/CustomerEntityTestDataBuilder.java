@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 import de.devtime.examples.library.persistence.entity.CustomerEntity.CustomerEntityBuilder;
 import de.devtime.examples.library.persistence.repository.CustomerRepository;
+import de.devtime.examples.library.test.builder.SaveContext;
 import de.devtime.examples.library.test.builder.TestDataBuilder;
 import de.devtime.examples.library.test.builder.TestDataBuilderWithSaveSupport;
 
@@ -62,7 +63,7 @@ public class CustomerEntityTestDataBuilder<B extends TestDataBuilder<CustomerEnt
   }
 
   @Override
-  public CustomerEntity buildInternally(final boolean withReferences, final boolean save) {
+  public CustomerEntity buildInternally(final boolean withReferences, final boolean save, final SaveContext context) {
     CustomerEntity entity = build().generateId();
     if (this.useExternalId) {
       entity.setId(this.id);
@@ -71,17 +72,18 @@ public class CustomerEntityTestDataBuilder<B extends TestDataBuilder<CustomerEnt
 
     // Build referenced objects
     if (withReferences) {
-      buildLoanedBooks(withReferences, save).forEach(entity::addLoanedBook);
+      buildLoanedBooks(withReferences, save, context).forEach(entity::addLoanedBook);
     }
     if (save) {
-      entity = save(entity);
+      entity = save(entity, context);
     }
     return entity;
   }
 
-  private List<BookEntity> buildLoanedBooks(final boolean withReferences, final boolean save) {
+  private List<BookEntity> buildLoanedBooks(final boolean withReferences, final boolean save,
+      final SaveContext context) {
     return this.bookTestDataProviders.stream()
-        .map(provider -> provider.buildInternally(withReferences, save))
+        .map(provider -> provider.buildInternally(withReferences, save, context))
         .toList();
   }
 }

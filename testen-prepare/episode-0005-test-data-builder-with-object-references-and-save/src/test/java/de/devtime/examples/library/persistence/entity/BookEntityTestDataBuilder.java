@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import org.springframework.context.ApplicationContext;
 
 import de.devtime.examples.library.persistence.repository.BookRepository;
+import de.devtime.examples.library.test.builder.SaveContext;
 import de.devtime.examples.library.test.builder.TestDataBuilder;
 import de.devtime.examples.library.test.builder.TestDataBuilderWithSaveSupport;
 
@@ -106,7 +107,7 @@ public class BookEntityTestDataBuilder<B extends TestDataBuilder<BookEntity>>
   }
 
   @Override
-  public BookEntity buildInternally(final boolean withReferences, final boolean save) {
+  public BookEntity buildInternally(final boolean withReferences, final boolean save, final SaveContext context) {
     BookEntity entity = build().generateId();
     if (this.useExternalId) {
       entity.setId(this.id);
@@ -115,42 +116,44 @@ public class BookEntityTestDataBuilder<B extends TestDataBuilder<BookEntity>>
 
     // Build referenced objects
     if (withReferences) {
-      entity.setAdditionalData(buildAdditionalData(withReferences, save));
-      entity.setCustomer(buildCustomer(withReferences, save));
-      buildBookPublishers(withReferences, save).forEach(entity::addBookPublisher);
-      buildAuthors(withReferences, save).forEach(entity::addAuthor);
+      entity.setAdditionalData(buildAdditionalData(withReferences, save, context));
+      entity.setCustomer(buildCustomer(withReferences, save, context));
+      buildBookPublishers(withReferences, save, context).forEach(entity::addBookPublisher);
+      buildAuthors(withReferences, save, context).forEach(entity::addAuthor);
     }
     if (save) {
-      entity = save(entity);
+      entity = save(entity, context);
     }
     return entity;
   }
 
-  private AdditionalBookDataEntity buildAdditionalData(final boolean withReferences, final boolean save) {
+  private AdditionalBookDataEntity buildAdditionalData(final boolean withReferences, final boolean save,
+      final SaveContext context) {
     AdditionalBookDataEntity referencedEntity = null;
     if (this.additionalDataTestDataProvider != null) {
-      referencedEntity = this.additionalDataTestDataProvider.buildInternally(withReferences, save);
+      referencedEntity = this.additionalDataTestDataProvider.buildInternally(withReferences, save, context);
     }
     return referencedEntity;
   }
 
-  private CustomerEntity buildCustomer(final boolean withReferences, final boolean save) {
+  private CustomerEntity buildCustomer(final boolean withReferences, final boolean save, final SaveContext context) {
     CustomerEntity referencedEntity = null;
     if (this.customerTestDataProvider != null) {
-      referencedEntity = this.customerTestDataProvider.buildInternally(withReferences, save);
+      referencedEntity = this.customerTestDataProvider.buildInternally(withReferences, save, context);
     }
     return referencedEntity;
   }
 
-  private List<BookPublisherEntity> buildBookPublishers(final boolean withReferences, final boolean save) {
+  private List<BookPublisherEntity> buildBookPublishers(final boolean withReferences, final boolean save,
+      final SaveContext context) {
     return this.bookPublisherEntityTestDataProviders.stream()
-        .map(provider -> provider.buildInternally(withReferences, save))
+        .map(provider -> provider.buildInternally(withReferences, save, context))
         .toList();
   }
 
-  private List<AuthorEntity> buildAuthors(final boolean withReferences, final boolean save) {
+  private List<AuthorEntity> buildAuthors(final boolean withReferences, final boolean save, final SaveContext context) {
     return this.authorTestDataProviders.stream()
-        .map(provider -> provider.buildInternally(withReferences, save))
+        .map(provider -> provider.buildInternally(withReferences, save, context))
         .toList();
   }
 }

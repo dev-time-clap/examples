@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 
 import de.devtime.examples.library.persistence.entity.BookPublisherEntity.BookPublisherEntityBuilder;
 import de.devtime.examples.library.persistence.repository.BookPublisherRepository;
+import de.devtime.examples.library.test.builder.SaveContext;
 import de.devtime.examples.library.test.builder.TestDataBuilder;
 import de.devtime.examples.library.test.builder.TestDataBuilderWithSaveSupport;
 
@@ -75,7 +76,8 @@ public class BookPublisherEntityTestDataBuilder<B extends TestDataBuilder<BookPu
   }
 
   @Override
-  public BookPublisherEntity buildInternally(final boolean withReferences, final boolean save) {
+  public BookPublisherEntity buildInternally(final boolean withReferences, final boolean save,
+      final SaveContext context) {
     BookPublisherEntity entity = build().generateId();
     if (this.useExternalId) {
       entity.setId(this.id);
@@ -84,27 +86,27 @@ public class BookPublisherEntityTestDataBuilder<B extends TestDataBuilder<BookPu
 
     // Build referenced objects
     if (withReferences) {
-      entity.setPublisher(buildPublisher(withReferences, save));
-      entity.setBook(buildBook(withReferences, save));
+      entity.setPublisher(buildPublisher(withReferences, save, context));
+      entity.setBook(buildBook(withReferences, save, context));
     }
     if (save) {
-      entity = save(entity);
+      entity = save(entity, context);
     }
     return entity;
   }
 
-  private PublisherEntity buildPublisher(final boolean withReferences, final boolean save) {
+  private PublisherEntity buildPublisher(final boolean withReferences, final boolean save, final SaveContext context) {
     PublisherEntity referencedEntity = null;
     if (this.publisherTestDataProvider != null) {
-      referencedEntity = this.publisherTestDataProvider.buildInternally(withReferences, save);
+      referencedEntity = this.publisherTestDataProvider.buildInternally(withReferences, save, context);
     }
     return referencedEntity;
   }
 
-  private BookEntity buildBook(final boolean withReferences, final boolean save) {
+  private BookEntity buildBook(final boolean withReferences, final boolean save, final SaveContext context) {
     BookEntity referencedEntity = null;
     if (this.bookTestDataProvider != null) {
-      referencedEntity = this.bookTestDataProvider.buildInternally(withReferences, save);
+      referencedEntity = this.bookTestDataProvider.buildInternally(withReferences, save, context);
     }
     return referencedEntity;
   }

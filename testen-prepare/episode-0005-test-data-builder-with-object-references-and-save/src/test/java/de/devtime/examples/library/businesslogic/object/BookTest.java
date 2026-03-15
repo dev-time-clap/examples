@@ -27,8 +27,17 @@ class BookTest {
    */
 
   @Test
+  void testOurNewTestDataBuilderWithReferences2() {
+    AdditionalBookDataEntityTestDataProvider.create()
+        .withBook(BookEntityTestDataProvider::bookByMorriganWithTitleLombokHowTo)
+        .bookDetailsForJustABookByMorrigan()
+        .buildWithReferencesAndSave();
+  }
+
+  @Test
   void testOurNewTestDataBuilderWithReferences() {
     BookEntity book = BookEntityTestDataProvider.create()
+        .withAdditionalData(AdditionalBookDataEntityTestDataProvider::bookDetailsForJustABookByMorrigan)
         .withAuthor(author -> author.anonymousAuthor().withArtistName("1"))
         .withAuthor(author -> author.anonymousAuthor().withArtistName("2"))
         .withAuthor(author -> author.anonymousAuthor().withArtistName("3"))

@@ -1,11 +1,7 @@
 package de.devtime.examples.library.test.builder;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,32 +17,32 @@ public interface TestDataBuilderWithSaveSupport<E, R extends JpaRepository<E, UU
   R getRepository(final ApplicationContext appContext);
 
   default E buildWithReferencesAndSave() {
-    return buildInternally(true, true);
+    ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+    TransactionHelper txHelper = applicationContext.getBean(TransactionHelper.class);
+    return txHelper.executeInTx(Propagation.REQUIRES_NEW, _ -> {
+      return buildInternally(true, true, new SaveContext(applicationContext));
+    });
   }
 
   @Override
   default E buildInternally(final boolean withReferences) {
-    return buildInternally(withReferences, false);
+    return buildInternally(withReferences, false, null);
   }
 
-  E buildInternally(final boolean withReferences, final boolean save);
+  E buildInternally(final boolean withReferences, final boolean save, final SaveContext context);
 
-  default E save(final E entity) {
-    ApplicationContext appContext = ApplicationContextProvider.getApplicationContext();
-    if (appContext == null) {
-      Logger log = LoggerFactory.getLogger(TestDataBuilderWithSaveSupport.class);
-      log.warn("No spring context available. The entity was not saved!");
-      return entity;
+  default E save(final E entity, final SaveContext context) {
+    if ((context != null) && context.isSaveSupported()) {
+      if (context.contains(entity.getClass(), getUniqueDataSetKey(entity))) {
+        return context.get(entity.getClass(), getUniqueDataSetKey(entity));
+      } else {
+        R repository = getRepository(context.getApplicationContext());
+        E savedEntity = repository.save(entity);
+        context.put(savedEntity.getClass(), getUniqueDataSetKey(savedEntity), savedEntity);
+        return savedEntity;
+      }
     } else {
-      TransactionHelper txHelper = appContext.getBean(TransactionHelper.class);
-      return txHelper.executeInTx(Propagation.REQUIRES_NEW, _ -> {
-        R repository = getRepository(appContext);
-        List<E> allEntities = repository.findAll();
-        return allEntities.stream()
-            .filter(persitedEntity -> Objects.equals(getUniqueDataSetKey(entity), getUniqueDataSetKey(persitedEntity)))
-            .findFirst()
-            .orElseGet(() -> (E) repository.save(entity));
-      });
+      return entity;
     }
   }
 }

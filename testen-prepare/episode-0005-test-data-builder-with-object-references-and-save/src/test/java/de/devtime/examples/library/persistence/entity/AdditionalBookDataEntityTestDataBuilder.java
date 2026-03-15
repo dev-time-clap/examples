@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 
 import de.devtime.examples.library.persistence.entity.AdditionalBookDataEntity.AdditionalBookDataEntityBuilder;
 import de.devtime.examples.library.persistence.repository.AdditionalBookDataRepository;
+import de.devtime.examples.library.test.builder.SaveContext;
 import de.devtime.examples.library.test.builder.TestDataBuilder;
 import de.devtime.examples.library.test.builder.TestDataBuilderWithSaveSupport;
 
@@ -56,7 +57,8 @@ public class AdditionalBookDataEntityTestDataBuilder<B extends TestDataBuilder<A
   }
 
   @Override
-  public AdditionalBookDataEntity buildInternally(final boolean withReferences, final boolean save) {
+  public AdditionalBookDataEntity buildInternally(final boolean withReferences, final boolean save,
+      final SaveContext context) {
     AdditionalBookDataEntity entity = build().generateId();
     if (this.useExternalId) {
       entity.setId(this.id);
@@ -65,18 +67,18 @@ public class AdditionalBookDataEntityTestDataBuilder<B extends TestDataBuilder<A
 
     // Build referenced objects
     if (withReferences) {
-      entity.setBook(buildBook(withReferences, save));
+      entity.setBook(buildBook(withReferences, save, context));
     }
     if (save) {
-      entity = save(entity);
+      entity = save(entity, context);
     }
     return entity;
   }
 
-  private BookEntity buildBook(final boolean withReferences, final boolean save) {
+  private BookEntity buildBook(final boolean withReferences, final boolean save, final SaveContext context) {
     BookEntity referencedEntity = null;
     if (this.bookTestDataBuilder != null) {
-      referencedEntity = this.bookTestDataBuilder.buildInternally(withReferences, save);
+      referencedEntity = this.bookTestDataBuilder.buildInternally(withReferences, save, context);
     }
     return referencedEntity;
   }
